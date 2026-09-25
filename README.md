@@ -13,6 +13,17 @@ the write/read/repair logic identical to what a real multi-node system would run
 See **[docs/DESIGN.md](docs/DESIGN.md)** for the full architecture, **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)**
 for diagrams, and **[docs/REQUIREMENTS_MAPPING.md](docs/REQUIREMENTS_MAPPING.md)** for how each piece
 of the demo pipeline maps to code.
+## Live Deployment
+
+**Live demo:** http://34.131.17.40
+
+The current production deployment runs on Google Cloud Compute Engine with:
+- Next.js coordinator behind Nginx
+- 6 independent Docker storage nodes
+- Supabase PostgreSQL for metadata
+- Replication factor `N=3`
+- Write quorum `W=2`
+- Read quorum `R=2`
 
 ## What it does
 
