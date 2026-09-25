@@ -15,7 +15,8 @@
     "checkpoint2:e2e": "tsx scripts/checkpoint2.ts",
     "checkpoint3:benchmark": "tsx scripts/checkpoint3-benchmark.ts",
     "checkpoint4:e2e": "tsx scripts/checkpoint4.ts",
-    "checkpoint5:e2e": "tsx scripts/checkpoint5.ts"
+    "checkpoint5:e2e": "tsx scripts/checkpoint5.ts",
+    "checkpoint6:e2e": "tsx scripts/checkpoint6.ts"
   },
   "dependencies": {
     "@prisma/client": "6.19.3",
