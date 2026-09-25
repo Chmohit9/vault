@@ -1,0 +1,19 @@
+{
+  "name": "@vault/storage-node",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Independently addressable Vault storage-node HTTP service (hackathon simulation of a distributed storage node).",
+  "main": "dist/server.js",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/server.js",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/node": "^20",
+    "tsx": "^4.23.15",
+    "typescript": "^5"
+  }
+}

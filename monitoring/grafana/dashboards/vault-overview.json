@@ -1,0 +1,12 @@
+{
+  "annotations":{"list":[]},"editable":true,"graphTooltip":0,"links":[],"panels":[
+    {"type":"stat","title":"Objects","gridPos":{"h":4,"w":6,"x":0,"y":0},"targets":[{"expr":"vault_objects_total","refId":"A"}]},
+    {"type":"stat","title":"Logical Bytes","gridPos":{"h":4,"w":6,"x":6,"y":0},"targets":[{"expr":"vault_logical_bytes_total","refId":"A"}]},
+    {"type":"stat","title":"Replicated Bytes","gridPos":{"h":4,"w":6,"x":12,"y":0},"targets":[{"expr":"vault_replicated_bytes_total","refId":"A"}]},
+    {"type":"stat","title":"Storage Overhead","gridPos":{"h":4,"w":6,"x":18,"y":0},"targets":[{"expr":"vault_storage_overhead_ratio","refId":"A"}]},
+    {"type":"timeseries","title":"Replica States","gridPos":{"h":8,"w":12,"x":0,"y":4},"targets":[{"expr":"vault_replica_status_total","legendFormat":"{{status}}","refId":"A"}]},
+    {"type":"timeseries","title":"Node Availability","gridPos":{"h":8,"w":12,"x":12,"y":4},"targets":[{"expr":"vault_node_available","legendFormat":"{{node}}","refId":"A"}]},
+    {"type":"timeseries","title":"Recovery Time","gridPos":{"h":8,"w":12,"x":0,"y":12},"targets":[{"expr":"vault_recovery_time_seconds_last","legendFormat":"last recovery","refId":"A"}]},
+    {"type":"timeseries","title":"Repair Cycle Duration","gridPos":{"h":8,"w":12,"x":12,"y":12},"targets":[{"expr":"vault_repair_duration_seconds_last","legendFormat":"last cycle","refId":"A"}]}
+  ],"schemaVersion":39,"style":"dark","tags":["vault","distributed-storage"],"templating":{"list":[]},"time":{"from":"now-30m","to":"now"},"title":"Vault Overview","version":1
+}

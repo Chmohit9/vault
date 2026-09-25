@@ -1,0 +1,134 @@
+# docker-compose.yml
+# Six independently addressable storage-node containers. Each has its own volume (its own "disk"),
+# its own NODE_ID, and its own port — start/stop/restart them individually to demo real node failure
+# and recovery against apps/storage-node instead of the simulated in-process nodes.
+#
+# The Next.js coordinator is NOT containerized here — it keeps running on the host (`npm run dev`)
+# and reaches these nodes at http://localhost:410X, same as it would reach any other localhost
+# service. Register a node's URL with the coordinator via `npm run register:http-nodes` (see
+# scripts/register-http-nodes.ts) once its container is up.
+#
+# Usage:
+#   docker compose up -d                  start the whole cluster
+#   docker compose stop storage-node-2    stop one node (simulate a crash)
+#   docker compose start storage-node-2   bring it back
+#   docker compose logs -f storage-node-2 tail one node's logs
+#   docker compose down -v                stop everything and delete all node data
+
+services:
+  storage-node-1:
+    build: ./apps/storage-node
+    container_name: vault-storage-node-1
+    environment:
+      NODE_ID: node-1
+      NODE_PORT: "4100"
+      STORAGE_PATH: /data
+    ports:
+      - "4101:4100"
+    volumes:
+      - node1-data:/data
+    restart: unless-stopped
+
+  storage-node-2:
+    build: ./apps/storage-node
+    container_name: vault-storage-node-2
+    environment:
+      NODE_ID: node-2
+      NODE_PORT: "4100"
+      STORAGE_PATH: /data
+    ports:
+      - "4102:4100"
+    volumes:
+      - node2-data:/data
+    restart: unless-stopped
+
+  storage-node-3:
+    build: ./apps/storage-node
+    container_name: vault-storage-node-3
+    environment:
+      NODE_ID: node-3
+      NODE_PORT: "4100"
+      STORAGE_PATH: /data
+    ports:
+      - "4103:4100"
+    volumes:
+      - node3-data:/data
+    restart: unless-stopped
+
+  storage-node-4:
+    build: ./apps/storage-node
+    container_name: vault-storage-node-4
+    environment:
+      NODE_ID: node-4
+      NODE_PORT: "4100"
+      STORAGE_PATH: /data
+    ports:
+      - "4104:4100"
+    volumes:
+      - node4-data:/data
+    restart: unless-stopped
+
+  storage-node-5:
+    build: ./apps/storage-node
+    container_name: vault-storage-node-5
+    environment:
+      NODE_ID: node-5
+      NODE_PORT: "4100"
+      STORAGE_PATH: /data
+    ports:
+      - "4105:4100"
+    volumes:
+      - node5-data:/data
+    restart: unless-stopped
+
+  storage-node-6:
+    build: ./apps/storage-node
+    container_name: vault-storage-node-6
+    environment:
+      NODE_ID: node-6
+      NODE_PORT: "4100"
+      STORAGE_PATH: /data
+    ports:
+      - "4106:4100"
+    volumes:
+      - node6-data:/data
+    restart: unless-stopped
+
+  prometheus:
+    image: prom/prometheus:v3.5.0
+    container_name: vault-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:12.1.1
+    container_name: vault-grafana
+    ports:
+      - "3001:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: vault-admin
+      GF_USERS_ALLOW_SIGN_UP: "false"
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    depends_on:
+      - prometheus
+    restart: unless-stopped
+
+volumes:
+  node1-data:
+  node2-data:
+  node3-data:
+  node4-data:
+  node5-data:
+  node6-data:
+  prometheus-data:
+  grafana-data:

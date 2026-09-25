@@ -1,26 +1,43 @@
 {
   "name": "vault",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit",
+    "seed": "tsx scripts/seed.ts",
+    "register:http-nodes": "tsx scripts/register-http-nodes.ts",
+    "smoke": "tsx scripts/smoke.ts",
+    "smoke:objects": "tsx scripts/smoke-objects.ts",
+    "checkpoint2:e2e": "tsx scripts/checkpoint2.ts",
+    "checkpoint3:benchmark": "tsx scripts/checkpoint3-benchmark.ts",
+    "checkpoint4:e2e": "tsx scripts/checkpoint4.ts",
+    "checkpoint5:e2e": "tsx scripts/checkpoint5.ts"
   },
   "dependencies": {
+    "@prisma/client": "6.19.3",
+    "@vercel/blob": "^2.8.0",
+    "date-fns": "^4.4.0",
+    "nanoid": "^6.0.1",
     "next": "16.3.6",
+    "prisma": "6.19.3",
     "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "react-dom": "19.2.8",
+    "zod": "^4.6.5"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "dotenv": "^18.0.3",
     "eslint": "^9",
     "eslint-config-next": "16.3.6",
     "tailwindcss": "^4",
+    "tsx": "^4.23.15",
     "typescript": "^5"
   }
 }

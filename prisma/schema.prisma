@@ -1,0 +1,153 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Node {
+  id            String     @id @default(cuid())
+  cluster       String     @default("main")
+  name          String
+  backendPrefix String
+  // When set, this node is backed by a real, independently-addressable HTTP storage-node service
+  // (see apps/storage-node) reachable at this URL, e.g. "http://localhost:4101". When null (the
+  // default), the node keeps using the shared simulated backend (LocalBackend/BlobBackend) exactly
+  // as before. See src/lib/storage/storageNode.ts for the factory that picks between the two.
+  baseUrl       String?
+  status        NodeStatus @default(HEALTHY)
+  lastHeartbeat DateTime   @default(now())
+
+  // Chaos / failure state
+  isCrashed     Boolean @default(false) // node process is dead (kill)
+  isPartitioned Boolean @default(false) // network partition (alive but unreachable)
+  isCorrupting  Boolean @default(false) // "flaky disk": stores corrupted bytes on write
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  replicas Replica[]
+
+  @@unique([cluster, name])
+  @@index([cluster, status])
+}
+
+enum NodeStatus {
+  HEALTHY
+  OFFLINE
+  DEGRADED
+}
+
+model StoredObject {
+  id                String   @id @default(cuid())
+  cluster           String   @default("main")
+  key               String
+  size              Int
+  contentType       String?
+  version           Int      @default(1)
+  checksum          String
+  replicationFactor Int      @default(3)
+  writeQuorum       Int      @default(2)
+  readQuorum        Int      @default(2)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  chunks Chunk[]
+
+  @@unique([cluster, key])
+  @@index([cluster])
+}
+
+model Chunk {
+  id       String       @id @default(cuid())
+  objectId String
+  object   StoredObject @relation(fields: [objectId], references: [id], onDelete: Cascade)
+
+  index    Int
+  size     Int
+  checksum String
+
+  createdAt DateTime @default(now())
+
+  replicas Replica[]
+
+  @@unique([objectId, index])
+  @@index([objectId])
+}
+
+model Replica {
+  id      String @id @default(cuid())
+  chunkId String
+  chunk   Chunk  @relation(fields: [chunkId], references: [id], onDelete: Cascade)
+
+  nodeId String
+  node   Node   @relation(fields: [nodeId], references: [id], onDelete: Cascade)
+
+  storageKey String
+  checksum   String
+  status     ReplicaStatus @default(SYNCED)
+  version    Int           @default(1)
+
+  lastVerifiedAt DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  @@unique([chunkId, nodeId])
+  @@index([nodeId])
+  @@index([status])
+}
+
+enum ReplicaStatus {
+  SYNCED
+  STALE
+  CORRUPTED
+  MISSING
+  REPAIRING
+}
+
+model RepairLog {
+  id        String     @id @default(cuid())
+  cluster   String     @default("main")
+  type      RepairType
+  objectKey String?
+  chunkId   String?
+  nodeId    String?
+  detail    String
+  success   Boolean
+  createdAt DateTime   @default(now())
+
+  @@index([type])
+  @@index([cluster, createdAt])
+}
+
+enum RepairType {
+  REPLICA_REPAIR
+  SCRUB
+  REBALANCE
+  NODE_FAILOVER
+}
+
+model ChaosEvent {
+  id        String      @id @default(cuid())
+  cluster   String      @default("main")
+  action    ChaosAction
+  nodeId    String?
+  chunkId   String?
+  detail    String
+  createdAt DateTime    @default(now())
+
+  @@index([cluster, createdAt])
+}
+
+enum ChaosAction {
+  KILL_NODE
+  REVIVE_NODE
+  CORRUPT_CHUNK
+  PARTITION_NODE
+  HEAL_PARTITION
+}
