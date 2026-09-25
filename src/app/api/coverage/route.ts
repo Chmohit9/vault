@@ -4,8 +4,7 @@ const requirements = [
   {
     id: "large-volume-data",
     requirement: "Large-volume / multi-chunk data",
-    evidence: "checkpoint6:e2e uploads and reads a 256 KiB object",
-  },
+    evidence:"checkpoint6:e2e uploads and reads a 10 MiB multi-chunk object"  },
   {
     id: "replication",
     requirement: "Replication",
